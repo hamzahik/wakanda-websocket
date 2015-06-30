@@ -48,7 +48,7 @@ var server	= ws.createServer({
 
 /*
  * Declare a host to which you can attach handlers
- * we can have the same pattern but different handlers depending on the recieved "host" header
+ * This way we can have the same pattern but different handlers depending on the recieved "host" header
  */
 var host	= server.addHost({
 
@@ -63,6 +63,8 @@ var host	= server.addHost({
 /*
  * Associate a handler to the host "127.0.0.1:8082"
  * received messages are going to be handled by the module "websocket-handler"
+ * The third parameter is boolean : if set to true, all connection attempts
+ * will pass through the authentication module.
  */
 host.addHandler( '^/api/1.0/\\?t=[a-zA-Z\\.0-9_\\-]+$' , 'websocket-handler' , true );
 ```
