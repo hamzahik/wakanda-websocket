@@ -1,6 +1,7 @@
 #Wakanda WebSocket Module
 
 **License** : MIT
+
 **Target Version** : WAKANDA 10 (No reason not to work on previous Wakanda Versions)
 
 This is an attempt to reimplement the WebSocket protocol from scratch for Wakanda Server.
@@ -113,6 +114,45 @@ exports.onmessage	= function( request , connectionStorage ){
 
 For each handler there is an associated module to process the received messages.
 
+###Code Example
+
+```javascript
+exports.onmessage	= function( message , response , session ){
+	
+	var parsedMessage;
+	
+	try {
+		parsedMessage		= JSON.parse( message );
+	} catch( e ) {
+		/*
+		 * Close the connection if we receive something other than JSON
+		 */
+		session.close();
+	};
+	
+	switch(parsedMessage.action){
+		
+		case "ping":
+			return JSON.stringify({
+				"status" : "ok",
+				"data" : "pong"
+			});
+			
+		case "join":
+			session.addToGroups(parsedMessage.data);
+			return JSON.stringify({
+				"status" : "ok"
+			});
+			
+		default:
+			return JSON.stringify({
+				"status" : "ko",
+				"error" : 404
+			});
+	}
+};
+```
+
 A hanlder module should expose an `onmessage` method receiving three parameters :
 
 - `message`
@@ -146,17 +186,20 @@ session.setID( "abc" );
 session.addToGroups( ["all", "gameFranceVSBrazilNotifications"] );
 ```
 
-- Quit broadcast groups
+- leave broadcast groups
 ```javascript
 session.removeFromGroups( ["all", "gameFranceVSBrazilNotifications"] );
+```
+
+- Store data in the current connection
+```javascript
+session.storage.fullname = "John Smith";
 ```
 
 <a name="server-to-client"></a>
 ##Send messages to users/broadcast groups
 
 **This is reserved for usage outside of message handlers (And the Websocket SharedWorker in general).**
-
-Sending to a group is not yet ready for usage from within the message handlers.
 
 ###BroadCast Group
 
