@@ -234,4 +234,5 @@ server.send("user12", "You have a new private message!");
 
 - Cannot use the HTTP server's port.
 - Does not handle compression.
+- Does not handle WSS.
 - Not heavily tested.
