@@ -1,6 +1,6 @@
 ﻿var CONFIG	= require('./config');
 
-var Server	= function( options , create ) {
+var WServer	= function( options , create ) {
 	
 	//TODO : lock	
 	//TODO : validate options
@@ -8,13 +8,13 @@ var Server	= function( options , create ) {
 	this.name	= options.name;
 	
 	var _storage	= this.refreshStorage();
-	var servers		= _storage.servers;
+	var wservers		= _storage.wservers;
 	
 	if ( create ) {
 		
-		Server.create( options );
+		WServer.create( options );
 		
-		servers[ this.name ]	= options;
+		wservers[ this.name ]	= options;
 		
 		this.storage			= _storage;
 		
@@ -24,25 +24,25 @@ var Server	= function( options , create ) {
 
 };
 
-Server.prototype.send			= function( connectionID , data ){
+WServer.prototype.send			= function( connectionID , data ){
 
-	Server.send( this.name , connectionID , data );
-
-};
-
-Server.prototype.sendToGroup	= function( groupID , data ){
-
-	Server.sendToGroup( this.name , groupID , data );
+	WServer.send( this.name , connectionID , data );
 
 };
 
-Server.prototype.addHost	= function( options ){
+WServer.prototype.sendToGroup	= function( groupID , data ){
+
+	WServer.sendToGroup( this.name , groupID , data );
+
+};
+
+WServer.prototype.addHost	= function( options ){
 	
 	return new Host( this , options , true );
 
 };
 
-Server.prototype.updateStorage	= function(){
+WServer.prototype.updateStorage	= function(){
 	
 	//TODO : lock
 	
@@ -52,7 +52,7 @@ Server.prototype.updateStorage	= function(){
 
 };
 
-Server.prototype.refreshStorage	= function( options ){
+WServer.prototype.refreshStorage	= function( options ){
 	
 	/*
 	 * Wakanda Storage returns a copy of the stored data and not a reference on it ( even when dealing with objects )
@@ -60,37 +60,37 @@ Server.prototype.refreshStorage	= function( options ){
 	 * will not change the content of storage.key1
 	 */
 	
-	var _storage	= Server.getStorage(); //Returns at least an empty JSON object
-	var servers		= _storage.servers || {}; //Returns at least an empty JSON object
+	var _storage	= WServer.getStorage(); //Returns at least an empty JSON object
+	var wservers		= _storage.wservers || {}; //Returns at least an empty JSON object
 	
-	if ( servers[ this.name ] ) {
+	if ( wservers[ this.name ] ) {
 	
-		var hosts	= servers[ this.name ].hosts || {}; //Returns at least an empty JSON object
+		var hosts	= wservers[ this.name ].hosts || {}; //Returns at least an empty JSON object
 		
-		servers[ this.name ].hosts	= hosts;
+		wservers[ this.name ].hosts	= hosts;
 	
 	};
 	
-	_storage.servers			= servers;
+	_storage.wservers			= wservers;
 	
 	this.storage				= _storage;
 	
 	/*
 	 * Event if the storage.WEBSOCKETS key was empty
 	 * we will at least endup with an object as such :
-	 * { servers : {} }
+	 * { wservers : {} }
 	 */
 	return _storage;
 
 };
 
-Server.create	= function( options ){
+WServer.create	= function( options ){
 
-    Server.runAction( options.name , 'init' , options , CONFIG.SERVER_CREATION_TIMEOUT );
+    WServer.runAction( options.name , 'init' , options , CONFIG.SERVER_CREATION_TIMEOUT );
 
 };
 
-Server.getStorage	= function(){
+WServer.getStorage	= function(){
 
 	var _storage	= storage.WEBSOCKETS || {};
 	
@@ -103,7 +103,7 @@ Server.getStorage	= function(){
 };
 
 
-Server.runAction	= function runAction( serverName , action , data , timeout ){
+WServer.runAction	= function runAction( serverName , action , data , timeout ){
 	
 
 	var folderPath	= File(module.filename).parent.path;
@@ -175,25 +175,25 @@ Server.runAction	= function runAction( serverName , action , data , timeout ){
 
 };
 
-Server.send		= function( serverName , connectionID , data ){
+WServer.send		= function( serverName , connectionID , data ){
 	
 	//TODO : handle buffers
 	var buffer	= data; //( data instanceof Buffer )? data : new Buffer( data.toString() , 'utf8' );
 	
-	Server.runAction( serverName , 'single_send' , { ID : connectionID , message : data } , CONFIG.SERVER_SINGLE_SEND_TIMEOUT );
+	WServer.runAction( serverName , 'single_send' , { ID : connectionID , message : data } , CONFIG.SERVER_SINGLE_SEND_TIMEOUT );
 
 };
 
-Server.sendToGroup		= function( serverName , groupID , data ){
+WServer.sendToGroup		= function( serverName , groupID , data ){
 	
 	//TODO : handle buffers
 	var buffer	= data; //( data instanceof Buffer )? data : new Buffer( data.toString() , 'utf8' );
 	
-	Server.runAction( serverName , 'group_send' , { ID : groupID , message : data } , CONFIG.SERVER_GROUP_SEND_TIMEOUT );
+	WServer.runAction( serverName , 'group_send' , { ID : groupID , message : data } , CONFIG.SERVER_GROUP_SEND_TIMEOUT );
 
 };
 
 
 var Host	= require( './api-host' );
 
-module.exports	= Server;
+module.exports	= WServer;

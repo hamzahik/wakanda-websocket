@@ -1,4 +1,4 @@
-﻿var server		= null;
+﻿var wserver		= null;
 var serverName	= null;
 var CLIENTS		= {};
 var GROUPS		= {};
@@ -92,9 +92,9 @@ function init( options ){
 	var _connect	= require('./ws-connect');
 	
 	serverName	= options.name;
-	server		= net.createServer( _connect.onConnect );
+	wserver		= net.createServer( _connect.onConnect );
 
-	return server.listen( options.port , options.IP );
+	return wserver.listen( options.port , options.IP );
 
 };
 

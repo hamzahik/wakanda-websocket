@@ -2,16 +2,16 @@
 
 websocket.createServer = function( options ) {
 	
-	return new Server( options , true );
+	return new WServer( options , true );
    
 };
 
 websocket.get = function( name ) {
 	
-	return new Server( { "name" : name } );
+	return new WServer( { "name" : name } );
    
 };
 
-var Server	= require( './api-server' );
+var WServer	= require( './api-server' );
 
 module.exports = websocket;
