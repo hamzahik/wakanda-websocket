@@ -1,22 +1,22 @@
-﻿var Host	= function( server , options , create ) {
+﻿var Host	= function( wserver , options , create ) {
 	
 	//TODO : lock
 	
 	//TODO : validate options
 	
 	this.name	= options.host;
-	this.server	= server;
+	this.wserver	= wserver;
 	
 	if ( create ) {
 		
-		var _storage	= this.server.refreshStorage();
+		var _storage	= this.wserver.refreshStorage();
 		var hosts		= this.getHosts( _storage );
 	
 		hosts[ this.name ]			= options;
 		
 		hosts[ this.name ].handlers	= hosts[ this.name ].handlers || {}; 
 		
-		this.server.updateStorage();
+		this.wserver.updateStorage();
 	
 	};
 
@@ -27,7 +27,7 @@
  */
 Host.prototype.getHosts		= function( storage ){
 
-	var host	= storage.servers[ this.server.name ].hosts;
+	var host	= storage.wservers[ this.wserver.name ].hosts;
 	
 	return host;
 
@@ -38,7 +38,7 @@ Host.prototype.getHosts		= function( storage ){
  */
 Host.prototype.get			= function( storage ){
 
-	var host	= storage.servers[ this.server.name ].hosts[ this.name ];
+	var host	= storage.wservers[ this.wserver.name ].hosts[ this.name ];
 	
 	return host;
 
@@ -51,7 +51,7 @@ Host.prototype.addHandler	= function( path , module , authenticate ){
 
 	//TODO : lock
 	
-	var _storage	= this.server.refreshStorage();
+	var _storage	= this.wserver.refreshStorage();
 	var host		= this.get( _storage );
 	
 	host.handlers[ path ] = {
@@ -64,7 +64,7 @@ Host.prototype.addHandler	= function( path , module , authenticate ){
 	
 	};
 	
-	this.server.updateStorage();
+	this.wserver.updateStorage();
 
 };
 

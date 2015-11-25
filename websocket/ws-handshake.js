@@ -98,9 +98,9 @@ function getHandler( host , URI ) {
 };
 
 function authenticateHandshakeRequest( connection , parsedRequest ) {
-
-	var server			= storage.WEBSOCKETS.servers[ serverName ];
-	var hosts			= server.hosts || null;
+	
+	var wserver			= storage.WEBSOCKETS.wservers[ serverName ];
+	var hosts			= wserver.hosts || null;
 	var host			= hosts ? hosts[ parsedRequest.headers.host ] : null;
 	var origins			= host ? host.origins : null;
 	var handler			= host ? getHandler( host , parsedRequest.URI ) : null;
