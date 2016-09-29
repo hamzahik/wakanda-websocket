@@ -65,6 +65,20 @@ Frame.prototype.handle	= function(){
 			break;
 			
 		case 8:
+			/**
+			 * TODO : https://tools.ietf.org/html/rfc6455#section-5.5.1
+			 *
+			 *	"If an endpoint receives a Close frame and did not previously send a
+			 *	Close frame, the endpoint MUST send a Close frame in response.  (When
+			 *	sending a Close frame in response, the endpoint typically echos the
+			 *	status code it received.)  It SHOULD do so as soon as practical.  An
+			 *	endpoint MAY delay sending a Close frame until its current message is
+			 *	sent (for instance, if the majority of a fragmented message is
+			 *	already sent, an endpoint MAY send the remaining fragments before
+			 *	sending a Close frame).  However, there is no guarantee that the
+			 *	endpoint that has already sent a Close frame will continue to process
+			 *	data."
+			 */
 			this.connection.state	= 2;
 			util.closeWS( this.connection , true );
 			break;
